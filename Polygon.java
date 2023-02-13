@@ -1,8 +1,8 @@
 import java.text.DecimalFormat;
 
 /**
- * @file Ractangle.java
- * @date 2/2/2023
+ * @file Polygon.java
+ * @date 2/8/2023
  * @author Ashton Guvenir
  *
  * @description Creates a polygon object with desired number of sides, length of sides, and shape of polygon.
@@ -20,6 +20,9 @@ public class Polygon {
 
     //default constructor
 
+    /**
+     * @description Creates a polygon with default values of 3 sides, 1 length, and triangle shape.
+     */
     public Polygon(){
         numSides = 3;
         sideLength = 1.0;
@@ -31,7 +34,7 @@ public class Polygon {
     //overloaded constructor (with parameters)
 
     /**
-     * Creates a polygon with the specified number of sides, side length, and shape.
+     * @description Creates a polygon with the specified number of sides, side length, and shape.
      * @param s number of sides on the polygon
      * @param l length of sides on the polygon
      * @param t type of shape  of the polygon
@@ -70,68 +73,89 @@ public class Polygon {
     //mutators
 
     /**
-     *Allows the user to change the number of sides on the polygon.
+     * @description Allows the user to change the number of sides on the polygon.
      * @param newNumSides desired number of sides
      */
     public void setNumSides(int newNumSides){
         numSides = newNumSides;
+        perimeter = calculatePerimeter();
+        area = calculateArea();
     }
 
     /**
-     * Allows the user to change the length of the sides on the polygon.
+     * @description Allows the user to change the length of the sides on the polygon.
      * @param newSideLength desired side length
      */
     public void setSideLength(double newSideLength){
         sideLength = newSideLength;
+        perimeter = calculatePerimeter();
+        area = calculateArea();
     }
 
     /**
-     * Allows the user to change the shape of the polygon.
-     * @param newShapeType desired shape
+     * @description Allows the user to change the shape of the polygon.
+     * @param newShapeName desired shape
      */
-    public void setShapeType(String newShapeType){
-        shapeType = newShapeType;
+    public void setShapeName(String newShapeName){
+        shapeType = newShapeName;
     }
 
     //calculator methods
 
     /**
+     * @description calculates the perimeter of the polygon and rounds it to 3 decimal places
      * @return the perimeter of the polygon
      */
     public double calculatePerimeter(){
-        return numSides * sideLength;
+        perimeter = Math.round(numSides * sideLength * 1000) / 1000.0;
+        return perimeter;
     }
 
     /**
+     * @description calculates the area of the polygon and rounds it to 3 decimal places
      * @return the area of the polygon
      */
     public double calculateArea(){
-        double angle = 360.0 / (2.0 * numSides);
-        double radian = Math.toRadians(angle);
-        double line = (sideLength / 2) / (Math.tan(radian));
-        return ((sideLength / 2) * line * numSides);
+        area = Math.round(sideLength * numSides * sideLength / Math.tan(Math.toRadians(180.0 / numSides)) * 250) / 1000.0;
+        return area;
     }
 
     //valid check methods
 
     /**
-     * Checks if the number of sides is valid or not
+     * @description Checks if the number of sides is valid or not
+     * If numSides is not greater than 2, then reassigns the polygon to default values of
+     * 3 sides, triangle shape, 1 length, and recalculates the perimeter and area
+     * @return true if there's more than 2 sides, false if less
      */
     public boolean sidesValid(){
         if(numSides > 2){
             return true;
         } else{
+            numSides = 3;
+            shapeType = "triangle";
+            sideLength = 1.0;
+            perimeter = calculatePerimeter();
+            area = calculateArea();
             return false;
         }
     }
-
+    
     /**
-     * Checks if the length of the sides are valid or not
+     * @description Checks if the length of the sides are valid or not
+     * If sideLength is not greater than 0, then reassigns the polygon to default values of
+     * 3 sides, triangle shape, 1 length, and recalculates the perimeter and area
+     * @return true if side length is more than 0, false if not
      */
     public boolean lengthsValid(){
         if(sideLength > 0){
             return true;
         } else{
+            numSides = 3;
+            shapeType = "triangle";
+            sideLength = 1.0;
+            perimeter = calculatePerimeter();
+            area = calculateArea();
             return false;
         }
     }
@@ -139,18 +163,20 @@ public class Polygon {
     //toString method
 
     /**
-     * Prints the type of shape, number of sides, side lengths, perimeter, and area to 3 decimal places
+     * @description Prints the type of shape, number of sides, side lengths, perimeter, and area to 3 decimal places
      * if the polygon passes the valid checks, otherwise prints invalid polygon
      */
     public String toString(){
+        DecimalFormat df = new DecimalFormat("#.###");
         if(sidesValid() && lengthsValid()) {
-            DecimalFormat df = new DecimalFormat("#.###");
             return "Your shape is a " + shapeType + " and it has " + numSides + " sides.\n" +
                     "It has a side length of " + df.format(sideLength) + ".\n" +
-                    "It has a perimeter of " + df.format(perimeter) + " units.\n" +
-                    "It has a area of " + df.format(area) + ".";
+                    "It has a perimeter of " + perimeter + " units.\n" +
+                    "It has a area of " + area + ".";
         } else{
-            return "Not a valid polygon";
+            return "Not a valid polygon. Your polygon was given a default of " + numSides + " sides, " +
+                    "was named \"" + shapeType + "\", and each side has a length of " + sideLength + " units" +
+                    "\nand recalculated the perimeter to " + perimeter + " and area to " + area;
         }
     }
 }
